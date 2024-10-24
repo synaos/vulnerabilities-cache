@@ -63,7 +63,7 @@ class MavenProjectTest {
             .block();
 
         assertThat(projects).map(p -> p.ref().name()).containsExactly(
-            "com.synaos.vulnerabilities-cache:maven"
+            "com.github.synaos.vulnerabilities-cache:maven"
         );
     }
 
@@ -77,9 +77,9 @@ class MavenProjectTest {
             .block();
 
         assertThat(projects).map(p -> p.ref().name()).containsExactly(
-            "com.synaos.vulnerabilities-cache:core",
-            "com.synaos.vulnerabilities-cache:maven",
-            "com.synaos.vulnerabilities-cache:vulnerabilities-cache"
+            "com.github.synaos.vulnerabilities-cache:core",
+            "com.github.synaos.vulnerabilities-cache:maven",
+            "com.github.synaos.vulnerabilities-cache:vulnerabilities-cache"
         );
     }
 

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.synaos.vulnerabilities-cache</groupId>
+        <groupId>com.github.synaos.vulnerabilities-cache</groupId>
         <artifactId>vulnerabilities-cache</artifactId>
         <version>development</version>
         <relativePath>../pom.xml</relativePath>
