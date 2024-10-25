@@ -3,6 +3,7 @@ package com.github.synaos.vulnerabilitiescache.maven;
 import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonEmpty;
 import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNull;
 import static java.lang.System.getProperty;
+import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
@@ -25,13 +26,11 @@ import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.naming.event.EventContext;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
-import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
@@ -195,19 +194,33 @@ final class Support {
         requireNonNull(type, "type");
         requireNonNull(in, "in");
         try {
-            final var roleField = type.getDeclaredField("ROLE");
-            if (!isStatic(roleField.getModifiers())) {
-                throw new IllegalArgumentException("ROLE field of " + type.getName() + " is not static.");
-            }
-            if (!roleField.getType().equals(String.class)) {
-                throw new IllegalArgumentException("ROLE field of " + type.getName() + " is not a String.");
-            }
-            final var componentKey = (String) roleField.get(null);
+            final var componentKey = toComponentKey(type);
             return type.cast(in.lookup(componentKey));
-        } catch (NoSuchFieldException e) {
-            throw new IllegalArgumentException(type.getName() + " does not contain a ROLE field.");
         } catch (IllegalAccessException | ComponentLookupException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Nonnull
+    private static <T> String toComponentKey(@Nonnull Class<T> type) throws IllegalAccessException {
+        try {
+            final var roleField = type.getDeclaredField("ROLE");
+            final var modifiers = roleField.getModifiers();
+            if (!isStatic(modifiers)) {
+                // Fallback
+                return type.getName();
+            }
+            if (!isPublic(modifiers)) {
+                // Fallback
+                return type.getName();
+            }
+            if (!roleField.getType().equals(String.class)) {
+                // Fallback
+                return type.getName();
+            }
+            return (String) roleField.get(null);
+        } catch (NoSuchFieldException ignored) {
+            return type.getName();
         }
     }
 
