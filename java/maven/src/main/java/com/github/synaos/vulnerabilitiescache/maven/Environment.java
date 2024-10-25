@@ -20,6 +20,7 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.*;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.project.DefaultProjectBuilderConfiguration;
 import org.apache.maven.project.MavenProject;
@@ -36,15 +37,15 @@ public final class Environment {
     private static final Logger LOG = LoggerFactory.getLogger(Environment.class);
 
     @Nonnull
-    private static final Environment defaultInstance = ofNullable(getenv("MAVEN_SETTINGS"))
+    private static final Environment standaloneInstance = ofNullable(getenv("MAVEN_SETTINGS"))
         .filter(v -> !v.isEmpty())
         .map(Paths::get)
         .map(Environment::of)
         .orElseGet(Environment::of);
 
     @Nonnull
-    public static Environment environment() {
-        return defaultInstance;
+    public static Environment standaloneEnvironment() {
+        return standaloneInstance;
     }
 
     @Nonnull
@@ -68,6 +69,20 @@ public final class Environment {
             localArtifactRepositoryOf(settings),
             new Properties(),
             new Properties()
+        );
+    }
+
+    @Nonnull
+    public static Environment of(@Nonnull MavenSession session) {
+        requireNonNull(session, "session");
+
+        //noinspection deprecation
+        return new Environment(
+            session.getContainer(),
+            session.getSettings(),
+            session.getLocalRepository(),
+            session.getUserProperties(),
+            session.getSystemProperties()
         );
     }
 
