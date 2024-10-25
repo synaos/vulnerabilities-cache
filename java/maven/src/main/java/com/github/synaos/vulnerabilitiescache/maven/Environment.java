@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toSet;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,15 +38,24 @@ public final class Environment {
     private static final Logger LOG = LoggerFactory.getLogger(Environment.class);
 
     @Nonnull
-    private static final Environment standaloneInstance = ofNullable(getenv("MAVEN_SETTINGS"))
-        .filter(v -> !v.isEmpty())
-        .map(Paths::get)
-        .map(Environment::of)
-        .orElseGet(Environment::of);
+    private static final AtomicReference<Environment> standaloneInstance = new AtomicReference<>();
 
     @Nonnull
     public static Environment standaloneEnvironment() {
-        return standaloneInstance;
+        while (true) {
+            var result = standaloneInstance.get();
+            if (result != null) {
+                return result;
+            }
+            result = ofNullable(getenv("MAVEN_SETTINGS"))
+                .filter(v -> !v.isEmpty())
+                .map(Paths::get)
+                .map(Environment::of)
+                .orElseGet(Environment::of);
+            if (standaloneInstance.compareAndSet(null, result)) {
+                return result;
+            }
+        }
     }
 
     @Nonnull
