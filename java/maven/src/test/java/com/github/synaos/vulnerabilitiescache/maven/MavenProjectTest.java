@@ -1,5 +1,6 @@
 package com.github.synaos.vulnerabilitiescache.maven;
 
+import static com.github.synaos.vulnerabilitiescache.maven.Environment.standaloneEnvironment;
 import static com.github.synaos.vulnerabilitiescache.maven.MavenProject.newMavenProject;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +16,7 @@ class MavenProjectTest {
 
     @Test
     void testMavenDependencies() {
-        final var project = newMavenProject()
+        final var project = newMavenProject(standaloneEnvironment())
             .withPomXml(Paths.get("."))
             .build();
 
@@ -28,7 +29,7 @@ class MavenProjectTest {
 
     @Test
     void testCoreDependencies() {
-        final var project = newMavenProject()
+        final var project = newMavenProject(standaloneEnvironment())
             .withPomXml(Paths.get("../core"))
             .build();
 
@@ -41,7 +42,7 @@ class MavenProjectTest {
 
     @Test
     void testUberPomMavenDependencies() {
-        final var project = newMavenProject()
+        final var project = newMavenProject(standaloneEnvironment())
             .withPomXml(Paths.get(".."))
             .build();
 
@@ -55,7 +56,7 @@ class MavenProjectTest {
 
     @Test
     void testMavenModules() {
-        final var projects = newMavenProject()
+        final var projects = newMavenProject(standaloneEnvironment())
             .withPomXml(Paths.get("."), false)
             .buildRecursive()
             .sort()
@@ -69,7 +70,7 @@ class MavenProjectTest {
 
     @Test
     void testUberPomModules() {
-        final var projects = newMavenProject()
+        final var projects = newMavenProject(standaloneEnvironment())
             .withPomXml(Paths.get(".."), false)
             .buildRecursive()
             .sort()

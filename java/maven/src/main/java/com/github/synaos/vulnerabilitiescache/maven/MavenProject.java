@@ -5,7 +5,6 @@ import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNu
 import static com.github.synaos.vulnerabilitiescache.common.Optionals.ofNonNull;
 import static com.github.synaos.vulnerabilitiescache.common.Optionals.requireToBePresent;
 import static com.github.synaos.vulnerabilitiescache.dependencies.Dependency.Scope.project;
-import static com.github.synaos.vulnerabilitiescache.maven.Environment.environment;
 import static com.github.synaos.vulnerabilitiescache.packages.PackageType.maven;
 import static com.github.synaos.vulnerabilitiescache.packages.VersionedPackageRef.newVersionedPackageRef;
 
@@ -24,6 +23,7 @@ import com.github.synaos.vulnerabilitiescache.dependencies.Dependency;
 import com.github.synaos.vulnerabilitiescache.dependencies.Owner;
 import com.github.synaos.vulnerabilitiescache.packages.VersionedPackageRef;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.ModelBase;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,13 +33,13 @@ import reactor.core.publisher.Mono;
 public final class MavenProject implements Dependency, Dependencies, Owner {
 
     @Nonnull
-    public static Builder newMavenProject() {
-        return newMavenProject(environment());
+    public static Builder newMavenProject(@Nonnull Environment environment) {
+        return new Builder(requireNonNull(environment, "environment"));
     }
 
     @Nonnull
-    public static Builder newMavenProject(@Nonnull Environment environment) {
-        return new Builder(requireNonNull(environment, "environment"));
+    public static Builder newMavenProject(@Nonnull MavenSession session) {
+        return new Builder(Environment.of(requireNonNull(session, "session")));
     }
 
     @Nonnull
