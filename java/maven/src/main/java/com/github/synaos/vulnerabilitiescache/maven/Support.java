@@ -103,10 +103,6 @@ final class Support {
 
             final var modelReader = new SettingsXpp3Reader();
             final var settings = modelReader.read(xmlReader);
-            final var rtInfo = new RuntimeInfo(settings);
-
-            rtInfo.setFile(file.toFile());
-            settings.setRuntimeInfo(rtInfo);
 
             return Optional.of(settings);
         } catch (FileNotFoundException | NoSuchFileException e) {
