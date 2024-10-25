@@ -1,5 +1,6 @@
 package com.github.synaos.vulnerabilitiescache;
 
+import static com.github.synaos.vulnerabilitiescache.common.Optionals.ofNonNull;
 import static com.github.synaos.vulnerabilitiescache.common.Optionals.requireToBePresent;
 
 import java.nio.file.Path;
@@ -48,8 +49,8 @@ public class IndexedVulnerabilities implements Vulnerabilities {
         private Optional<Path> path = Optional.empty();
 
         @Nonnull
-        public Builder withPath(@Nonnull Optional<Path> path) {
-            this.path = path;
+        public Builder withPath(@Nonnull Path v) {
+            this.path = ofNonNull(v, "path");
             return this;
         }
 
