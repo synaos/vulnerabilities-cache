@@ -18,11 +18,14 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.naming.event.EventContext;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
@@ -38,14 +41,19 @@ import org.apache.maven.wagon.resource.Resource;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.component.discovery.ComponentDiscoveryEvent;
+import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class Support {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Support.class);
 
     @Nonnull
     private static final ArtifactRepositoryLayout artifactRepositoryLayout = new DefaultRepositoryLayout();
@@ -208,16 +216,41 @@ final class Support {
     }
 
     @Nonnull
-    static PlexusContainer newPlexusContainer() {
+    static PlexusContainer newStandalonePlexusContainer() {
         final var container = new DefaultPlexusContainer();
         try {
             container.initialize();
+            container.registerComponentDiscoveryListener(Support::removeAllWithConfigurationFrom);
             container.start();
         } catch (PlexusContainerException e) {
             throw new RuntimeException(e);
         }
         container.setLoggerManager(new Slf4jToPlexusLoggerManager());
         return container;
+    }
+
+    private static void removeAllWithConfigurationFrom(@Nullable ComponentDiscoveryEvent event) {
+        if (event == null) {
+            return;
+        }
+
+        final var descriptorSet = event.getComponentSetDescriptor();
+        if (descriptorSet == null) {
+            return;
+        }
+
+        //noinspection unchecked
+        final var descriptors = (List<ComponentDescriptor>) descriptorSet.getComponents();
+        if (descriptors == null || descriptors.isEmpty()) {
+            return;
+        }
+
+        final var config = descriptors.get(0).getConfiguration();
+        if (config.getChildren().length == 0) {
+            return;
+        }
+
+        descriptorSet.setComponents(List.of());
     }
 
 }
