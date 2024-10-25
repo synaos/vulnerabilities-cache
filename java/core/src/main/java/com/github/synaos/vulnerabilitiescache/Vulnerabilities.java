@@ -10,6 +10,9 @@ import reactor.core.publisher.Mono;
 public interface Vulnerabilities {
 
     @Nonnull
+    Mono<Vulnerability> findBy(@Nonnull Id.Cve id);
+
+    @Nonnull
     Flux<Vulnerability> findBy(@Nonnull PackageRef ref);
 
     @Nonnull
