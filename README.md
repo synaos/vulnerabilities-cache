@@ -1,3 +1,4 @@
+[![](https://jitpack.io/v/synaos/vulnerabilities-cache.svg)](https://jitpack.io/#synaos/vulnerabilities-cache)
 # Vulnerabilities Cache
 
 Provides an easy way to resolve vulnerabilities by packages and the affected versions.
