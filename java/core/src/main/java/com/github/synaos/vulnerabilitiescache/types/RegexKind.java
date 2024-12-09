@@ -4,39 +4,49 @@ import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNu
 import static java.lang.String.format;
 
 import java.util.regex.Pattern;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.synaos.vulnerabilitiescache.common.Objects;
 
-public abstract class RegexKind<T extends RegexKind<T>> implements Comparable<T> {
+@ThreadSafe
+@Immutable
+public abstract class RegexKind<T extends RegexKind<T>> extends StringKind<T> {
 
     @Nonnull
     private final Pattern pattern;
-    @Nonnull
-    private final String value;
 
     protected RegexKind(
         @Nonnull Pattern pattern,
         @Nonnull String value
     ) {
+        this(
+            null,
+            null,
+            requireNonNull(pattern, "pattern"),
+            requireNonNull(value, "value")
+        );
+    }
+
+    protected RegexKind(
+        @Nullable @Nonnegative Integer minLength,
+        @Nullable @Nonnegative Integer maxLength,
+        @Nonnull Pattern pattern,
+        @Nonnull String value
+    ) {
+        super(
+            minLength,
+            maxLength,
+            requireNonNull(value, "value")
+        );
         this.pattern = requireNonNull(pattern, "pattern");
-        this.value = requireNonNull(value, "value");
 
         if (!this.pattern.matcher(value).matches()) {
-            throw new IllegalArgumentException(format("'%s' does not match %s.", this.value, this.pattern));
+            throw new IllegalArgumentException(format("'%s' does not match %s.", this.value(), this.pattern));
         }
-    }
-
-    @Override
-    public final int compareTo(@Nonnull T o) {
-        return value().compareTo(o.value());
-    }
-
-    @JsonValue
-    @Nonnull
-    public final String value() {
-        return value;
     }
 
     @Nonnull
@@ -45,22 +55,15 @@ public abstract class RegexKind<T extends RegexKind<T>> implements Comparable<T>
     }
 
     @Override
-    public final String toString() {
-        return value();
-    }
-
-    @Override
     public final boolean equals(Object o) {
         if (this == o) {return true;}
         if (o == null || !getClass().equals(o.getClass())) {return false;}
         final var that = (RegexKind<?>) o;
-        return Objects.equals(pattern, that.pattern)
-            && Objects.equals(value, that.value);
+        return super.equals(o) && Objects.equals(pattern, that.pattern);
     }
 
     @Override
-    public final int hashCode() {
-        return Objects.hash(pattern, value);
+    public int hashCode() {
+        return super.hashCode() ^ pattern.hashCode();
     }
-
 }

@@ -1,6 +1,8 @@
 package com.github.synaos.vulnerabilitiescache.cve;
 
 
+import java.util.Locale;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -12,35 +14,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class Record {
 
     @Nonnull
+    @JsonProperty("dataType")
     private final DataType dataType;
     @Nonnull
-    private final String dataVersion;
+    @JsonProperty("dataVersion")
+    private final DataVersion dataVersion;
     @Nonnull
+    @JsonProperty("cveMetadata")
     private final CveMetadata cveMetadata;
     @Nonnull
+    @JsonProperty("containers")
     private final RecordContainers containers;
-
     @Nonnull
-    @JsonProperty(value = "dataType", required = true)
-    public DataType dataType() {
-        return dataType;
-    }
-
+    @JsonProperty("language")
+    private final Optional<Locale> language;
     @Nonnull
-    @JsonProperty(value = "dataVersion", required = true)
-    public String dataVersion() {
-        return dataVersion;
-    }
-
+    @JsonProperty("englishLanguage")
+    private final Optional<Locale> englishLanguage;
     @Nonnull
-    @JsonProperty(value = "cveMetadata", required = true)
-    public CveMetadata cveMetadata() {
-        return cveMetadata;
-    }
-
+    @JsonProperty("taxonomyMappings")
+    private final Optional<TaxonomyMappings> taxonomyMappings;
     @Nonnull
-    @JsonProperty(value = "containers", required = true)
-    public RecordContainers containers() {
-        return containers;
-    }
+    @JsonProperty("tagExtension")
+    private final Optional<TagExtension> tagExtension;
+
 }

@@ -73,6 +73,27 @@ public interface Id extends Comparable<Id> {
 
     }
 
+    @JsonSerialize(using = Cves.Serializer.class)
+    @JsonDeserialize(using = Cves.Deserializer.class)
+    final class Cves extends ListKind<Cve, Cves> {
+
+        public Cves(@Nonnull List<Cve> entries) {
+            super(1, null, entries);
+        }
+
+        static class Serializer extends ListKind.Serializer<Cve, Cves> {
+            Serializer() {
+                super(Cve.class);
+            }
+        }
+
+        static class Deserializer extends ListKind.Deserializer<Cve, Cves> {
+            Deserializer() {
+                super(Cve.class, Cves::new);
+            }
+        }
+    }
+
     final class Cve extends Base {
 
         private final static Pattern pattern = Pattern.compile("CVE-([0-9]{4})-([0-9]{4,19})");

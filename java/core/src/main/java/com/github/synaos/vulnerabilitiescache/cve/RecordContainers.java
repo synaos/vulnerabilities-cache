@@ -1,26 +1,21 @@
 package com.github.synaos.vulnerabilitiescache.cve;
 
-import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@ThreadSafe
+@Immutable
 public final class RecordContainers {
 
     @Nonnull
-    private final RecordCna cna;
+    @JsonProperty(value = "cna")
+    private final CnaContainer cna;
     @Nonnull
-    private final List<RecordAdp> adp;
+    @JsonProperty(value = "adp")
+    private final Optional<AdpContainers> adp;
 
-    @Nonnull
-    @JsonProperty(value = "cna", required = true)
-    public RecordCna cna() {
-        return cna;
-    }
-
-    @Nonnull
-    @JsonProperty(value = "adp", required = true)
-    public List<RecordAdp> adp() {
-        return adp;
-    }
 }
