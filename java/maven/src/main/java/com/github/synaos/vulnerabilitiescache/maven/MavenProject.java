@@ -18,19 +18,19 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import com.github.synaos.vulnerabilitiescache.common.Lazy;
-import com.github.synaos.vulnerabilitiescache.dependencies.Dependencies;
 import com.github.synaos.vulnerabilitiescache.dependencies.Dependency;
 import com.github.synaos.vulnerabilitiescache.dependencies.Owner;
 import com.github.synaos.vulnerabilitiescache.packages.VersionedPackageRef;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.ModelBase;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Immutable
 @ThreadSafe
-public final class MavenProject implements Dependency, Dependencies, Owner {
+public final class MavenProject implements Dependency, Owner {
 
     @Nonnull
     public static Builder newMavenProject(@Nonnull Environment environment) {
@@ -95,6 +95,12 @@ public final class MavenProject implements Dependency, Dependencies, Owner {
     @Override
     public VersionedPackageRef ref() {
         return ref.get(raw);
+    }
+
+    @NotNull
+    @Override
+    public Optional<Path> path() {
+        return Optional.of(raw.getFile().toPath());
     }
 
     @Nonnull

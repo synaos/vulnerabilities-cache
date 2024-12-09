@@ -3,6 +3,7 @@ package com.github.synaos.vulnerabilitiescache.maven;
 import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonEmpty;
 import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNull;
 import static java.lang.System.getProperty;
+import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
@@ -18,17 +19,18 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
-import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
@@ -38,14 +40,19 @@ import org.apache.maven.wagon.resource.Resource;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.component.discovery.ComponentDiscoveryEvent;
+import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class Support {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Support.class);
 
     @Nonnull
     private static final ArtifactRepositoryLayout artifactRepositoryLayout = new DefaultRepositoryLayout();
@@ -95,10 +102,6 @@ final class Support {
 
             final var modelReader = new SettingsXpp3Reader();
             final var settings = modelReader.read(xmlReader);
-            final var rtInfo = new RuntimeInfo(settings);
-
-            rtInfo.setFile(file.toFile());
-            settings.setRuntimeInfo(rtInfo);
 
             return Optional.of(settings);
         } catch (FileNotFoundException | NoSuchFileException e) {
@@ -191,33 +194,72 @@ final class Support {
         requireNonNull(type, "type");
         requireNonNull(in, "in");
         try {
-            final var roleField = type.getDeclaredField("ROLE");
-            if (!isStatic(roleField.getModifiers())) {
-                throw new IllegalArgumentException("ROLE field of " + type.getName() + " is not static.");
-            }
-            if (!roleField.getType().equals(String.class)) {
-                throw new IllegalArgumentException("ROLE field of " + type.getName() + " is not a String.");
-            }
-            final var componentKey = (String) roleField.get(null);
+            final var componentKey = toComponentKey(type);
             return type.cast(in.lookup(componentKey));
-        } catch (NoSuchFieldException e) {
-            throw new IllegalArgumentException(type.getName() + " does not contain a ROLE field.");
         } catch (IllegalAccessException | ComponentLookupException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Nonnull
-    static PlexusContainer newPlexusContainer() {
+    private static <T> String toComponentKey(@Nonnull Class<T> type) throws IllegalAccessException {
+        try {
+            final var roleField = type.getDeclaredField("ROLE");
+            final var modifiers = roleField.getModifiers();
+            if (!isStatic(modifiers)) {
+                // Fallback
+                return type.getName();
+            }
+            if (!isPublic(modifiers)) {
+                // Fallback
+                return type.getName();
+            }
+            if (!roleField.getType().equals(String.class)) {
+                // Fallback
+                return type.getName();
+            }
+            return (String) roleField.get(null);
+        } catch (NoSuchFieldException ignored) {
+            return type.getName();
+        }
+    }
+
+    @Nonnull
+    static PlexusContainer newStandalonePlexusContainer() {
         final var container = new DefaultPlexusContainer();
         try {
             container.initialize();
+            container.registerComponentDiscoveryListener(Support::removeAllWithConfigurationFrom);
             container.start();
         } catch (PlexusContainerException e) {
             throw new RuntimeException(e);
         }
         container.setLoggerManager(new Slf4jToPlexusLoggerManager());
         return container;
+    }
+
+    private static void removeAllWithConfigurationFrom(@Nullable ComponentDiscoveryEvent event) {
+        if (event == null) {
+            return;
+        }
+
+        final var descriptorSet = event.getComponentSetDescriptor();
+        if (descriptorSet == null) {
+            return;
+        }
+
+        //noinspection unchecked
+        final var descriptors = (List<ComponentDescriptor>) descriptorSet.getComponents();
+        if (descriptors == null || descriptors.isEmpty()) {
+            return;
+        }
+
+        final var config = descriptors.get(0).getConfiguration();
+        if (config.getChildren().length == 0) {
+            return;
+        }
+
+        descriptorSet.setComponents(List.of());
     }
 
 }

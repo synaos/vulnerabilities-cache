@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toSet;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,22 +38,31 @@ public final class Environment {
     private static final Logger LOG = LoggerFactory.getLogger(Environment.class);
 
     @Nonnull
-    private static final Environment standaloneInstance = ofNullable(getenv("MAVEN_SETTINGS"))
-        .filter(v -> !v.isEmpty())
-        .map(Paths::get)
-        .map(Environment::of)
-        .orElseGet(Environment::of);
+    private static final AtomicReference<Environment> standaloneInstance = new AtomicReference<>();
 
     @Nonnull
     public static Environment standaloneEnvironment() {
-        return standaloneInstance;
+        while (true) {
+            var result = standaloneInstance.get();
+            if (result != null) {
+                return result;
+            }
+            result = ofNullable(getenv("MAVEN_SETTINGS"))
+                .filter(v -> !v.isEmpty())
+                .map(Paths::get)
+                .map(Environment::of)
+                .orElseGet(Environment::of);
+            if (standaloneInstance.compareAndSet(null, result)) {
+                return result;
+            }
+        }
     }
 
     @Nonnull
     public static Environment of(@Nonnull Path... paths) {
         final var settings = settingsOf(paths);
 
-        final var container = newPlexusContainer();
+        final var container = newStandalonePlexusContainer();
 
         final var wagonManager = lookup(WagonManager.class, container);
         wagonManager.setDownloadMonitor(new LogTransferListener(LOG));
@@ -95,7 +105,7 @@ public final class Environment {
     @Nonnull
     private final Properties executionProperties;
     @Nonnull
-    private final PlexusContainer container = newPlexusContainer();
+    private final PlexusContainer container;
     @Nonnull
     private final MavenProjectBuilder mavenProjectBuilder;
     @Nonnull
@@ -112,6 +122,7 @@ public final class Environment {
         @Nonnull Properties userProperties,
         @Nonnull Properties executionProperties
     ) {
+        this.container = requireNonNull(container, "container");
         this.settings = requireNonNull(settings, "settings");
         this.localRepository = requireNonNull(localRepository, "localRepository");
         this.userProperties = requireNonNull(userProperties, "userProperties");
@@ -270,7 +281,7 @@ public final class Environment {
             target.putAll(v);
         }
         return new Environment(
-            newPlexusContainer(),
+            container(),
             settings(),
             localRepository(),
             target,
@@ -285,7 +296,7 @@ public final class Environment {
             target.putAll(v);
         }
         return new Environment(
-            newPlexusContainer(),
+            container(),
             settings(),
             localRepository(),
             userProperties(),
