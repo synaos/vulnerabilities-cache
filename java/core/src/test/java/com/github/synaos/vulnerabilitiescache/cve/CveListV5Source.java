@@ -26,6 +26,9 @@ import reactor.core.publisher.Mono;
 
 public final class CveListV5Source {
 
+    public static final String CVELIST_LOCATION_PROPERTY = "cvelistV5.location";
+    public static final String CVELIST_LOCATION_ENVVAR = "CVE_LIST_V5_LOCATION";
+
     public static final class Extension implements ParameterResolver, ExecutionCondition {
 
         @Nonnull
@@ -78,7 +81,7 @@ public final class CveListV5Source {
     }
 
     public CveListV5Source() {
-        this(ofNullable(getProperty("cvelistV5.location", getenv("CVE_LIST_V5_LOCATION")))
+        this(ofNullable(getProperty(CVELIST_LOCATION_PROPERTY, getenv(CVELIST_LOCATION_ENVVAR)))
             .filter(StringUtils::isNotBlank)
             .map(Paths::get)
             .orElse(null)

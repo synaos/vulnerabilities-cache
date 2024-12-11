@@ -45,6 +45,10 @@ final class CodecTest {
         }
     }
 
+    /**
+     * This test will only work if either the system property {@link CveListV5Source#CVELIST_LOCATION_PROPERTY} or
+     * {@link CveListV5Source#CVELIST_LOCATION_ENVVAR} is pointing to a directory with the cve jsons inside.
+     */
     @Test
     void readAllRecordsIfPresent(@Nonnull CveListV5Source source) {
         final var count = new AtomicLong();
