@@ -13,7 +13,7 @@ public final class ProblemDescriptionType extends StringKind<ProblemDescriptionT
 
     @JsonCreator
     @Nonnull
-    public static ProblemDescriptionType module(@Nonnull String v) {
+    public static ProblemDescriptionType problemDescriptionType(@Nonnull String v) {
         return new ProblemDescriptionType(v);
     }
 

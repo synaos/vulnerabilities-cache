@@ -9,6 +9,7 @@ import static java.util.Locale.US;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -107,16 +108,23 @@ public interface Id extends Comparable<Id> {
         @JsonCreator
         public static Cve of(@Nonnull String name) {
             requireNonNull(name, "name");
+            return tryOf(name)
+                .orElseThrow(() -> new IllegalArgumentException("Illegal CVE: " + (name.isEmpty() ? "<empty>" : name)));
+        }
+
+        @Nonnull
+        public static Optional<Cve> tryOf(@Nonnull String name) {
+            requireNonNull(name, "name");
             if (name.isEmpty()) {
-                throw new IllegalArgumentException("Illegal CVE: <empty>");
+                return Optional.empty();
             }
             final var matcher = pattern.matcher(name);
             if (!matcher.matches()) {
-                throw new IllegalArgumentException("Illegal CVE: " + name);
+                return Optional.empty();
             }
             final var yearI = parseInt(matcher.group(1));
             final var sub = parseLong(matcher.group(2));
-            return new Cve(Year.of(yearI), sub);
+            return Optional.of(new Cve(Year.of(yearI), sub));
         }
 
         private Cve(@Nonnull Year year, long sub) {

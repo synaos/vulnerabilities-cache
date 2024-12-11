@@ -9,16 +9,16 @@ import com.github.synaos.vulnerabilitiescache.types.StringKind;
 
 @ThreadSafe
 @Immutable
-public final class ShortName extends StringKind<ShortName> {
+public final class Platform extends StringKind<Platform> {
 
     @JsonCreator
     @Nonnull
-    public static ShortName shortName(@Nonnull String v) {
-        return new ShortName(v);
+    public static Platform platform(@Nonnull String v) {
+        return new Platform(v);
     }
 
-    private ShortName(@Nonnull String value) {
-        super(2, 32, value);
+    private Platform(@Nonnull String value) {
+        super(1, 1024, value);
     }
 
 }

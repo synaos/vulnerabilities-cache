@@ -7,29 +7,29 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.synaos.vulnerabilitiescache.cve.Products.Deserializer;
-import com.github.synaos.vulnerabilitiescache.cve.Products.Serializer;
+import com.github.synaos.vulnerabilitiescache.cve.VersionChanges.Deserializer;
+import com.github.synaos.vulnerabilitiescache.cve.VersionChanges.Serializer;
 import com.github.synaos.vulnerabilitiescache.types.ListKind;
 
 @ThreadSafe
 @Immutable
 @JsonSerialize(using = Serializer.class)
 @JsonDeserialize(using = Deserializer.class)
-public final class Products extends ListKind<Product, Products> {
+public final class VersionChanges extends ListKind<VersionChange, VersionChanges> {
 
-    public Products(@Nonnull List<Product> entries) {
+    public VersionChanges(@Nonnull List<VersionChange> entries) {
         super(1, null, entries);
     }
 
-    static class Serializer extends ListKind.Serializer<Product, Products> {
+    static class Serializer extends ListKind.Serializer<VersionChange, VersionChanges> {
         Serializer() {
-            super(Product.class);
+            super(VersionChange.class);
         }
     }
 
-    static class Deserializer extends ListKind.Deserializer<Product, Products> {
+    static class Deserializer extends ListKind.Deserializer<VersionChange, VersionChanges> {
         Deserializer() {
-            super(Product.class, Products::new);
+            super(VersionChange.class, VersionChanges::new);
         }
     }
 }

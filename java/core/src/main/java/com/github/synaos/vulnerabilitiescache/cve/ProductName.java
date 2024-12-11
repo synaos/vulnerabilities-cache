@@ -14,7 +14,7 @@ public final class ProductName extends StringKind<ProductName> {
 
     @JsonCreator
     @Nonnull
-    public static ProductName programName(@Nonnull String v) {
+    public static ProductName productName(@Nonnull String v) {
         return new ProductName(v);
     }
 

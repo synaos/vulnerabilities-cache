@@ -25,6 +25,8 @@ public final class TagExtension extends RegexKind<TagExtension> {
         super(2, 128, pattern, value);
     }
 
+    @ThreadSafe
+    @Immutable
     public final static class Cna extends RegexKind<TagExtension> {
 
         @JsonCreator
@@ -41,6 +43,8 @@ public final class TagExtension extends RegexKind<TagExtension> {
 
     }
 
+    @ThreadSafe
+    @Immutable
     public final static class Adp extends RegexKind<TagExtension> {
 
         @JsonCreator

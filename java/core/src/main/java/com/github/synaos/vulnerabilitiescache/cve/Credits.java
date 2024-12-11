@@ -15,21 +15,21 @@ import com.github.synaos.vulnerabilitiescache.types.ListKind;
 @Immutable
 @JsonSerialize(using = Serializer.class)
 @JsonDeserialize(using = Deserializer.class)
-public final class Credits extends ListKind<TimelineRecord, Credits> {
+public final class Credits extends ListKind<Credit, Credits> {
 
-    public Credits(@Nonnull List<TimelineRecord> entries) {
+    public Credits(@Nonnull List<Credit> entries) {
         super(1, null, entries);
     }
 
-    static class Serializer extends ListKind.Serializer<TimelineRecord, Credits> {
+    static class Serializer extends ListKind.Serializer<Credit, Credits> {
         Serializer() {
-            super(TimelineRecord.class);
+            super(Credit.class);
         }
     }
 
-    static class Deserializer extends ListKind.Deserializer<TimelineRecord, Credits> {
+    static class Deserializer extends ListKind.Deserializer<Credit, Credits> {
         Deserializer() {
-            super(TimelineRecord.class, Credits::new);
+            super(Credit.class, Credits::new);
         }
     }
 }

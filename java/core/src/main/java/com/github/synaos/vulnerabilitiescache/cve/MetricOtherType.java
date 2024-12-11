@@ -13,7 +13,7 @@ public final class MetricOtherType extends StringKind<MetricOtherType> {
 
     @JsonCreator
     @Nonnull
-    public static MetricOtherType metricFormat(@Nonnull String v) {
+    public static MetricOtherType metricOtherType(@Nonnull String v) {
         return new MetricOtherType(v);
     }
 
