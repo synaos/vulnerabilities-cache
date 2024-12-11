@@ -20,7 +20,6 @@ import static java.util.Optional.ofNullable;
 @JsonDeserialize(builder = AdpContainer.Builder.class)
 @ThreadSafe
 @Immutable
-@JsonIgnoreProperties({"source"})
 public final class AdpContainer {
     @Nonnull
     @JsonProperty("providerMetadata")
@@ -36,7 +35,7 @@ public final class AdpContainer {
     private final Optional<Descriptions> descriptions;
     @Nonnull
     @JsonProperty("affected")
-    private final Products affected;
+    private final Optional<Products> affected;
     @Nonnull
     @JsonProperty("problemTypes")
     private final Optional<ProblemTypes> problemTypes;
@@ -80,7 +79,7 @@ public final class AdpContainer {
         this.datePublic = builder.datePublic;
         this.title = builder.title;
         this.descriptions = builder.descriptions;
-        this.affected = requireToBePresent(builder.affected, "affected");
+        this.affected = builder.affected;
         this.problemTypes = builder.problemTypes;
         this.references = builder.references;
         this.impacts = builder.impacts;
@@ -125,9 +124,9 @@ public final class AdpContainer {
         return descriptions;
     }
 
-    @JsonProperty(value = "affected", required = true)
+    @JsonProperty(value = "affected")
     @Nonnull
-    public Products affected() {
+    public Optional<Products> affected() {
         return affected;
     }
 
@@ -204,6 +203,7 @@ public final class AdpContainer {
     }
 
     @JsonPOJOBuilder
+    @JsonIgnoreProperties({"source", "x_legacyV4Record", "x_generator", "x_redhatCweChain"})
     public static final class Builder {
         @Nonnull
         private Optional<ProviderMetadata> providerMetadata = Optional.empty();
@@ -261,17 +261,17 @@ public final class AdpContainer {
             return this;
         }
 
-        @JsonProperty(value = "descriptions", required = true)
+        @JsonProperty(value = "descriptions")
         @Nonnull
         public Builder withDescriptions(@Nullable Descriptions v) {
             this.descriptions = ofNullable(v);
             return this;
         }
 
-        @JsonProperty(value = "affected", required = true)
+        @JsonProperty(value = "affected")
         @Nonnull
-        public Builder withAffected(@Nonnull Products v) {
-            this.affected = ofNonNull(v, "affected");
+        public Builder withAffected(@Nullable Products v) {
+            this.affected = ofNullable(v);
             return this;
         }
 

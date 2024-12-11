@@ -1,6 +1,6 @@
 package com.github.synaos.vulnerabilitiescache.cvss.v4;
 
-public enum AccessComplexity {
+public enum AttackComplexity {
     HIGH,
     LOW
 }

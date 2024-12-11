@@ -27,10 +27,10 @@ public final class Cvss {
     private final VectorString vectorString;
     @Nonnull
     @JsonProperty("accessVector")
-    private final Optional<AccessVector> accessVector;
+    private final Optional<AttackVector> accessVector;
     @Nonnull
     @JsonProperty("attackComplexity")
-    private final Optional<AccessComplexity> attackComplexity;
+    private final Optional<AttackComplexity> attackComplexity;
     @Nonnull
     @JsonProperty("privilegesRequired")
     private final Optional<PrivilegesRequired> privilegesRequired;
@@ -168,13 +168,13 @@ public final class Cvss {
 
     @JsonProperty("accessVector")
     @Nonnull
-    public Optional<AccessVector> accessVector() {
+    public Optional<AttackVector> accessVector() {
         return accessVector;
     }
 
     @JsonProperty("attackComplexity")
     @Nonnull
-    public Optional<AccessComplexity> attackComplexity() {
+    public Optional<AttackComplexity> attackComplexity() {
         return attackComplexity;
     }
 
@@ -341,9 +341,9 @@ public final class Cvss {
         @Nonnull
         private Optional<VectorString> vectorString = Optional.empty();
         @Nonnull
-        private Optional<AccessVector> accessVector = Optional.empty();
+        private Optional<AttackVector> accessVector = Optional.empty();
         @Nonnull
-        private Optional<AccessComplexity> attackComplexity = Optional.empty();
+        private Optional<AttackComplexity> attackComplexity = Optional.empty();
         @Nonnull
         private Optional<PrivilegesRequired> privilegesRequired = Optional.empty();
         @Nonnull
@@ -413,14 +413,14 @@ public final class Cvss {
 
         @JsonProperty("accessVector")
         @Nonnull
-        public Builder withAccessVector(@Nullable AccessVector v) {
+        public Builder withAttackVector(@Nullable AttackVector v) {
             this.accessVector = ofNullable(v);
             return this;
         }
 
         @JsonProperty("attackComplexity")
         @Nonnull
-        public Builder withAttackComplexity(@Nullable AccessComplexity v) {
+        public Builder withAttackComplexity(@Nullable AttackComplexity v) {
             this.attackComplexity = ofNullable(v);
             return this;
         }

@@ -31,11 +31,11 @@ public final class Cvss {
     @JsonProperty("baseSeverity")
     private final Severity baseSeverity;
     @Nonnull
-    @JsonProperty("accessVector")
-    private final Optional<AccessVector> accessVector;
+    @JsonProperty("attackVector")
+    private final Optional<AttackVector> attackVector;
     @Nonnull
     @JsonProperty("attackComplexity")
-    private final Optional<AccessComplexity> attackComplexity;
+    private final Optional<AttackComplexity> attackComplexity;
     @Nonnull
     @JsonProperty("attackRequirements")
     private final Optional<AttackRequirements> attackRequirements;
@@ -130,7 +130,7 @@ public final class Cvss {
         this.vectorString = requireToBePresent(builder.vectorString, "vectorString");
         this.baseScore = requireToBePresent(builder.baseScore, "baseScore");
         this.baseSeverity = requireToBePresent(builder.baseSeverity, "baseSeverity");
-        this.accessVector = builder.accessVector;
+        this.attackVector = builder.attackVector;
         this.attackComplexity = builder.attackComplexity;
         this.attackRequirements = builder.attackRequirements;
         this.privilegesRequired = builder.privilegesRequired;
@@ -197,15 +197,15 @@ public final class Cvss {
         return baseSeverity;
     }
 
-    @JsonProperty("accessVector")
+    @JsonProperty("attackVector")
     @Nonnull
-    public Optional<AccessVector> accessVector() {
-        return accessVector;
+    public Optional<AttackVector> attackVector() {
+        return attackVector;
     }
 
     @JsonProperty("attackComplexity")
     @Nonnull
-    public Optional<AccessComplexity> attackComplexity() {
+    public Optional<AttackComplexity> attackComplexity() {
         return attackComplexity;
     }
 
@@ -393,9 +393,9 @@ public final class Cvss {
         @Nonnull
         private Optional<Severity> baseSeverity = Optional.empty();
         @Nonnull
-        private Optional<AccessVector> accessVector = Optional.empty();
+        private Optional<AttackVector> attackVector = Optional.empty();
         @Nonnull
-        private Optional<AccessComplexity> attackComplexity = Optional.empty();
+        private Optional<AttackComplexity> attackComplexity = Optional.empty();
         @Nonnull
         private Optional<AttackRequirements> attackRequirements = Optional.empty();
         @Nonnull
@@ -483,16 +483,16 @@ public final class Cvss {
             return this;
         }
 
-        @JsonProperty("accessVector")
+        @JsonProperty("attackVector")
         @Nonnull
-        public Builder withAccessVector(@Nullable AccessVector v) {
-            this.accessVector = ofNullable(v);
+        public Builder withAttackVector(@Nullable AttackVector v) {
+            this.attackVector = ofNullable(v);
             return this;
         }
 
         @JsonProperty("attackComplexity")
         @Nonnull
-        public Builder withAttackComplexity(@Nullable AccessComplexity v) {
+        public Builder withAttackComplexity(@Nullable AttackComplexity v) {
             this.attackComplexity = ofNullable(v);
             return this;
         }

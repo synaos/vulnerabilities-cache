@@ -21,7 +21,6 @@ import com.github.synaos.vulnerabilitiescache.Id;
 @JsonDeserialize(builder = CnaContainer.Builder.class)
 @ThreadSafe
 @Immutable
-@JsonIgnoreProperties({"source"})
 public final class CnaContainer {
     @Nonnull
     @JsonProperty("providerMetadata")
@@ -43,13 +42,13 @@ public final class CnaContainer {
     private final Optional<Descriptions> rejectedReasons;
     @Nonnull
     @JsonProperty("affected")
-    private final Products affected;
+    private final Optional<Products> affected;
     @Nonnull
     @JsonProperty("problemTypes")
     private final Optional<ProblemTypes> problemTypes;
     @Nonnull
     @JsonProperty("references")
-    private final References references;
+    private final Optional<References> references;
     @Nonnull
     @JsonProperty("impacts")
     private final Optional<Impacts> impacts;
@@ -92,9 +91,9 @@ public final class CnaContainer {
         this.title = builder.title;
         this.descriptions = builder.descriptions;
         this.rejectedReasons = builder.rejectedReasons;
-        this.affected = requireToBePresent(builder.affected, "affected");
+        this.affected = builder.affected;
         this.problemTypes = builder.problemTypes;
-        this.references = requireToBePresent(builder.references, "references");
+        this.references = builder.references;
         this.impacts = builder.impacts;
         this.metrics = builder.metrics;
         this.configurations = builder.configurations;
@@ -149,9 +148,9 @@ public final class CnaContainer {
         return rejectedReasons;
     }
 
-    @JsonProperty(value = "affected", required = true)
+    @JsonProperty(value = "affected")
     @Nonnull
-    public Products affected() {
+    public Optional<Products> affected() {
         return affected;
     }
 
@@ -161,9 +160,9 @@ public final class CnaContainer {
         return problemTypes;
     }
 
-    @JsonProperty(value = "references", required = true)
+    @JsonProperty(value = "references")
     @Nonnull
-    public References references() {
+    public Optional<References> references() {
         return references;
     }
 
@@ -234,6 +233,7 @@ public final class CnaContainer {
     }
 
     @JsonPOJOBuilder
+    @JsonIgnoreProperties({"source", "x_legacyV4Record", "x_generator", "x_redhatCweChain"})
     public static final class Builder {
         @Nonnull
         private Optional<ProviderMetadata> providerMetadata = Optional.empty();
@@ -318,10 +318,10 @@ public final class CnaContainer {
             return this;
         }
 
-        @JsonProperty(value = "affected", required = true)
+        @JsonProperty(value = "affected")
         @Nonnull
-        public Builder withAffected(@Nonnull Products v) {
-            this.affected = ofNonNull(v, "affected");
+        public Builder withAffected(@Nullable Products v) {
+            this.affected = ofNullable(v);
             return this;
         }
 
@@ -332,10 +332,10 @@ public final class CnaContainer {
             return this;
         }
 
-        @JsonProperty(value = "references", required = true)
+        @JsonProperty(value = "references")
         @Nonnull
-        public Builder withReferences(@Nonnull References v) {
-            this.references = ofNonNull(v, "references");
+        public Builder withReferences(@Nullable References v) {
+            this.references = ofNullable(v);
             return this;
         }
 
