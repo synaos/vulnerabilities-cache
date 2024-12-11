@@ -44,7 +44,7 @@ public abstract class RegexKind<T extends RegexKind<T>> extends StringKind<T> {
         );
         this.pattern = requireNonNull(pattern, "pattern");
 
-        if (!this.pattern.matcher(value).matches()) {
+        if (!this.pattern.matcher(value).find()) {
             throw new IllegalArgumentException(format("'%s' does not match %s.", this.value(), this.pattern));
         }
     }

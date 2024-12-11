@@ -196,30 +196,9 @@ public interface Id extends Comparable<Id> {
 
     }
 
-    @JsonSerialize(using = Cpes.Serializer.class)
-    @JsonDeserialize(using = Cpes.Deserializer.class)
-    final class Cpes extends ListKind<Cpe, Cpes> {
-        public Cpes(@Nonnull List<Cpe> entries) {
-            super(1, 2048, entries);
-        }
-
-        static class Serializer extends ListKind.Serializer<Cpe, Cpes> {
-            Serializer() {
-                super(Cpe.class);
-            }
-        }
-
-        static class Deserializer extends ListKind.Deserializer<Cpe, Cpes> {
-            Deserializer() {
-                super(Cpe.class, Cpes::new);
-            }
-        }
-    }
-
-
     final class Cwe extends Base {
 
-        private final static Pattern pattern = Pattern.compile("CWE-([1-9][0-9]{1,5})");
+        private final static Pattern pattern = Pattern.compile("CWE-([1-9][0-9]{0,5})");
 
         @Nonnegative
         private final long number;

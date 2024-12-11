@@ -1,9 +1,12 @@
 package com.github.synaos.vulnerabilitiescache.cve;
 
 import static com.github.synaos.vulnerabilitiescache.common.Throwables.throwSneaky;
+import static java.lang.Boolean.TRUE;
 import static java.lang.System.getProperty;
 import static java.lang.System.getenv;
 import static java.util.Optional.ofNullable;
+import static reactor.core.publisher.Flux.fromStream;
+import static reactor.core.scheduler.Schedulers.boundedElastic;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -18,6 +21,8 @@ import javax.annotation.Nullable;
 import com.github.synaos.vulnerabilitiescache.Id;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.util.StringUtils;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public final class CveListV5Source {
 
@@ -81,21 +86,23 @@ public final class CveListV5Source {
     }
 
     public boolean isAvailable() {
-        return locations().findAny().isPresent();
+        return TRUE.equals(locations().next()
+            .map(v -> true)
+            .block());
     }
 
     @Nonnull
-    public Stream<Path> locations() {
-        return location
-            .map(v -> {
+    public Flux<Path> locations() {
+        return Mono.justOrEmpty(location)
+            .publishOn(boundedElastic())
+            .flatMapMany(v -> {
                     try {
-                        return Files.walk(v);
+                        return fromStream(Files.walk(v));
                     } catch (IOException e) {
                         return throwSneaky(e);
                     }
                 }
             )
-            .orElseGet(Stream::empty)
             .filter(path -> {
                 final var fn = path.getFileName().toString();
                 if (!fn.endsWith(".json") || fn.length() < 6) {

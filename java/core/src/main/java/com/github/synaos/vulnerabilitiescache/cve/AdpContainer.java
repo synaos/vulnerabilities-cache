@@ -203,7 +203,7 @@ public final class AdpContainer {
     }
 
     @JsonPOJOBuilder
-    @JsonIgnoreProperties({"source", "x_legacyV4Record", "x_generator", "x_redhatCweChain"})
+    @JsonIgnoreProperties({"source"})
     public static final class Builder {
         @Nonnull
         private Optional<ProviderMetadata> providerMetadata = Optional.empty();

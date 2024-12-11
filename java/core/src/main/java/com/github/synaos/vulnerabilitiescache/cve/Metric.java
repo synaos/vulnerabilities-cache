@@ -105,7 +105,7 @@ public final class Metric {
         @Nonnull
         private Optional<MetricScenarios> scenarios = Optional.empty();
         @Nonnull
-        private Optional<Cvss> cvssV2_0 = Optional.empty();
+        private Optional<com.github.synaos.vulnerabilitiescache.cvss.v2.Cvss> cvssV2_0 = Optional.empty();
         @Nonnull
         private Optional<com.github.synaos.vulnerabilitiescache.cvss.v3.Cvss> cvssV3_0 = Optional.empty();
         @Nonnull

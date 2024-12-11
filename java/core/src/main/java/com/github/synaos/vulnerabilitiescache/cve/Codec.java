@@ -19,9 +19,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleDeserializers;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -93,6 +96,7 @@ public final class Codec {
                 .enable(INCLUDE_SOURCE_IN_LOCATION)
                 .findAndRegisterModules()
                 .registerModule(new Module())
+                .addHandler(new IgnoreXPrefixedPropertiesHandler())
                 ;
         }
 
@@ -109,10 +113,27 @@ public final class Codec {
 
     }
 
+    private static final class IgnoreXPrefixedPropertiesHandler extends DeserializationProblemHandler {
+        @Override
+        public boolean handleUnknownProperty(
+            @Nonnull DeserializationContext ctxt,
+            @Nonnull JsonParser p,
+            @Nonnull JsonDeserializer<?> deserializer,
+            @Nonnull Object beanOrClass,
+            @Nonnull String propertyName
+        ) throws IOException {
+            if (propertyName.startsWith("x_")) {
+                p.skipChildren();
+                return true;
+            }
+            return false;
+        }
+    }
+
     private static final class Module extends SimpleModule {
 
         private Module() {
-            super("MyCustomModule", new com.fasterxml.jackson.core.Version(1, 0, 0, "runtime", null, null));
+            super("VulnerabilitiesCacheModule", new com.fasterxml.jackson.core.Version(1, 0, 0, "runtime", null, null));
         }
 
         @Override

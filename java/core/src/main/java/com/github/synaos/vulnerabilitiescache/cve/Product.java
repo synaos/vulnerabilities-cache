@@ -1,19 +1,19 @@
 package com.github.synaos.vulnerabilitiescache.cve;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.github.synaos.vulnerabilitiescache.Id.Cpes;
+import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
+import java.net.URI;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.net.URI;
-import java.util.Optional;
 
-import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = Product.Builder.class)
 @ThreadSafe
@@ -33,7 +33,7 @@ public final class Product {
     private final Optional<PackageName> packageName;
     @Nonnull
     @JsonProperty("cpes")
-    private final Optional<Cpes> cpes;
+    private final Optional<CpeNames> cpes;
     @Nonnull
     @JsonProperty("modules")
     private final Optional<ModuleNames> modules;
@@ -99,7 +99,7 @@ public final class Product {
 
     @JsonProperty("cpes")
     @Nonnull
-    public Optional<Cpes> cpes() {
+    public Optional<CpeNames> cpes() {
         return cpes;
     }
 
@@ -146,6 +146,7 @@ public final class Product {
     }
 
     @JsonPOJOBuilder
+    @JsonIgnoreProperties({"versionType"})
     public static final class Builder {
         @Nonnull
         private Optional<VendorName> vendor = Optional.empty();
@@ -156,7 +157,7 @@ public final class Product {
         @Nonnull
         private Optional<PackageName> packageName = Optional.empty();
         @Nonnull
-        private Optional<Cpes> cpes = Optional.empty();
+        private Optional<CpeNames> cpes = Optional.empty();
         @Nonnull
         private Optional<ModuleNames> modules = Optional.empty();
         @Nonnull
@@ -202,7 +203,7 @@ public final class Product {
 
         @JsonProperty("cpes")
         @Nonnull
-        public Builder withCpes(@Nullable Cpes v) {
+        public Builder withCpes(@Nullable CpeNames v) {
             this.cpes = ofNullable(v);
             return this;
         }

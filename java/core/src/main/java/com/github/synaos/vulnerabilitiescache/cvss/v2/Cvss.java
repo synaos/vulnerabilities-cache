@@ -30,7 +30,7 @@ public final class Cvss {
     private final Optional<AccessVector> accessVector;
     @Nonnull
     @JsonProperty("accessComplexity")
-    private final Optional<AccessVector> accessComplexity;
+    private final Optional<AccessComplexity> accessComplexity;
     @Nonnull
     @JsonProperty("authentication")
     private final Optional<Authentication> authentication;
@@ -130,7 +130,7 @@ public final class Cvss {
 
     @JsonProperty("accessComplexity")
     @Nonnull
-    public Optional<AccessVector> accessComplexity() {
+    public Optional<AccessComplexity> accessComplexity() {
         return accessComplexity;
     }
 
@@ -233,7 +233,7 @@ public final class Cvss {
         @Nonnull
         private Optional<AccessVector> accessVector = Optional.empty();
         @Nonnull
-        private Optional<AccessVector> accessComplexity = Optional.empty();
+        private Optional<AccessComplexity> accessComplexity = Optional.empty();
         @Nonnull
         private Optional<Authentication> authentication = Optional.empty();
         @Nonnull
@@ -288,7 +288,7 @@ public final class Cvss {
 
         @JsonProperty("accessComplexity")
         @Nonnull
-        public Builder withAccessComplexity(@Nullable AccessVector v) {
+        public Builder withAccessComplexity(@Nullable AccessComplexity v) {
             this.accessComplexity = ofNullable(v);
             return this;
         }

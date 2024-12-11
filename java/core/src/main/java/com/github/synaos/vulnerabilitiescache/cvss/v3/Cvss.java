@@ -26,8 +26,8 @@ public final class Cvss {
     @JsonProperty("vectorString")
     private final VectorString vectorString;
     @Nonnull
-    @JsonProperty("accessVector")
-    private final Optional<AttackVector> accessVector;
+    @JsonProperty("attackVector")
+    private final Optional<AttackVector> attackVector;
     @Nonnull
     @JsonProperty("attackComplexity")
     private final Optional<AttackComplexity> attackComplexity;
@@ -114,7 +114,7 @@ public final class Cvss {
         requireNonNull(builder, "builder");
         this.version = requireToBePresent(builder.version, "version");
         this.vectorString = requireToBePresent(builder.vectorString, "vectorString");
-        this.accessVector = builder.accessVector;
+        this.attackVector = builder.attackVector;
         this.attackComplexity = builder.attackComplexity;
         this.privilegesRequired = builder.privilegesRequired;
         this.userInteraction = builder.userInteraction;
@@ -166,10 +166,10 @@ public final class Cvss {
         return vectorString;
     }
 
-    @JsonProperty("accessVector")
+    @JsonProperty("attackVector")
     @Nonnull
-    public Optional<AttackVector> accessVector() {
-        return accessVector;
+    public Optional<AttackVector> attackVector() {
+        return attackVector;
     }
 
     @JsonProperty("attackComplexity")
@@ -341,7 +341,7 @@ public final class Cvss {
         @Nonnull
         private Optional<VectorString> vectorString = Optional.empty();
         @Nonnull
-        private Optional<AttackVector> accessVector = Optional.empty();
+        private Optional<AttackVector> attackVector = Optional.empty();
         @Nonnull
         private Optional<AttackComplexity> attackComplexity = Optional.empty();
         @Nonnull
@@ -411,10 +411,10 @@ public final class Cvss {
             return this;
         }
 
-        @JsonProperty("accessVector")
+        @JsonProperty("attackVector")
         @Nonnull
         public Builder withAttackVector(@Nullable AttackVector v) {
-            this.accessVector = ofNullable(v);
+            this.attackVector = ofNullable(v);
             return this;
         }
 
