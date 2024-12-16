@@ -9,13 +9,17 @@ import static java.nio.file.Files.newBufferedReader;
 import static java.time.ZoneOffset.UTC;
 
 import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.NoSuchElementException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -56,29 +60,39 @@ public final class Codec {
 
     @Nonnull
     public Record readRecord(@Nonnull Reader from) {
+        return readRecord(from, null);
+    }
+
+    @Nonnull
+    public Record readRecord(@Nonnull Reader from, @Nullable String name) {
+        return read(Record.class, from, name);
+    }
+
+    @Nonnull
+    public Record readRecord(@Nonnull Path from) throws NoSuchElementException {
         return read(Record.class, from);
     }
 
     @Nonnull
-    public Record readRecord(@Nonnull Path from) {
-        return read(Record.class, from);
-    }
-
-    @Nonnull
-    private <T> T read(@Nonnull Class<T> type, @Nonnull Reader from) {
+    private <T> T read(@Nonnull Class<T> type, @Nonnull Reader from, @Nullable String name) {
         try {
             return mapper.readValue(from, type);
+        } catch (JsonMappingException e) {
+            if (name != null) {
+                return throwSneaky(new JsonMappingException((Closeable) e.getProcessor(), "Failed to read " + type.getSimpleName() + " from " + name + ".", e));
+            }
+            return throwSneaky(e);
         } catch (IOException e) {
             return throwSneaky(e);
         }
     }
 
     @Nonnull
-    private <T> T read(@Nonnull Class<T> type, @Nonnull Path from) {
+    private <T> T read(@Nonnull Class<T> type, @Nonnull Path from) throws NoSuchElementException {
         try (final var reader = newBufferedReader(from, UTF_8)) {
-            return read(type, reader);
-        } catch (JsonMappingException e) {
-            return throwSneaky(new JsonMappingException((Closeable) e.getProcessor(), "Failed to read " + type.getSimpleName() + " from " + from + ".", e));
+            return read(type, reader, from.toString());
+        } catch (FileNotFoundException | NoSuchFileException e) {
+            throw new NoSuchElementException("File " + from + " not found");
         } catch (IOException e) {
             return throwSneaky(e);
         }
@@ -152,7 +166,7 @@ public final class Codec {
         }
 
         @Override
-        protected ZonedDateTime _deserialize(@Nonnull String value, @Nonnull DeserializationContext ctxt) throws IOException {
+        protected ZonedDateTime _deserialize(@Nonnull String value, @Nonnull DeserializationContext ctxt) {
             try {
                 return ZonedDateTime.parse(value);
             } catch (DateTimeParseException e) {

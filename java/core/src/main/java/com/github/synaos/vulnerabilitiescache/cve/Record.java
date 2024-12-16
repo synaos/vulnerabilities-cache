@@ -13,14 +13,27 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.github.synaos.vulnerabilitiescache.Id;
+import org.jetbrains.annotations.NotNull;
 
 @JsonDeserialize(builder = Record.Builder.class)
 @ThreadSafe
 @Immutable
-public final class Record {
+public final class Record implements Comparable<Record> {
+
+    @Override
+    public int compareTo(@NotNull Record o) {
+        return cveMetadata.compareTo(o.cveMetadata);
+    }
+
+    @Override
+    public String toString() {
+        return cveMetadata().toString();
+    }
 
     @Nonnull
     @JsonProperty("dataType")
@@ -62,6 +75,12 @@ public final class Record {
     @Nonnull
     public static Builder newRecord() {
         return new Builder();
+    }
+
+    @Nonnull
+    @JsonIgnore
+    public Id.Cve id() {
+        return cveMetadata().cveId();
     }
 
     @JsonProperty(value = "dataType", required = true)

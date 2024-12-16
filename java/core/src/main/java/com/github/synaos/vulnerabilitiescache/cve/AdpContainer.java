@@ -37,6 +37,9 @@ public final class AdpContainer {
     @JsonProperty("affected")
     private final Optional<Products> affected;
     @Nonnull
+    @JsonProperty("cpeApplicability")
+    private final Optional<CpeApplicabilities> cpeApplicability;
+    @Nonnull
     @JsonProperty("problemTypes")
     private final Optional<ProblemTypes> problemTypes;
     @Nonnull
@@ -80,6 +83,7 @@ public final class AdpContainer {
         this.title = builder.title;
         this.descriptions = builder.descriptions;
         this.affected = builder.affected;
+        this.cpeApplicability = builder.cpeApplicability;
         this.problemTypes = builder.problemTypes;
         this.references = builder.references;
         this.impacts = builder.impacts;
@@ -128,6 +132,12 @@ public final class AdpContainer {
     @Nonnull
     public Optional<Products> affected() {
         return affected;
+    }
+
+    @JsonProperty(value = "cpeApplicability")
+    @Nonnull
+    public Optional<CpeApplicabilities> cpeApplicability() {
+        return cpeApplicability;
     }
 
     @JsonProperty("problemTypes")
@@ -216,6 +226,8 @@ public final class AdpContainer {
         @Nonnull
         private Optional<Products> affected = Optional.empty();
         @Nonnull
+        private Optional<CpeApplicabilities> cpeApplicability = Optional.empty();
+        @Nonnull
         private Optional<ProblemTypes> problemTypes = Optional.empty();
         @Nonnull
         private Optional<References> references = Optional.empty();
@@ -272,6 +284,13 @@ public final class AdpContainer {
         @Nonnull
         public Builder withAffected(@Nullable Products v) {
             this.affected = ofNullable(v);
+            return this;
+        }
+
+        @JsonProperty(value = "cpeApplicability")
+        @Nonnull
+        public Builder withCpeApplicability(@Nullable CpeApplicabilities v) {
+            this.cpeApplicability = ofNullable(v);
             return this;
         }
 

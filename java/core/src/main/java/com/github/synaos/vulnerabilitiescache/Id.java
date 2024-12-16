@@ -9,6 +9,7 @@ import static java.util.Locale.US;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnegative;
@@ -143,9 +144,23 @@ public interface Id extends Comparable<Id> {
         }
 
         @Nonnull
+        public String subString() {
+            if (sub < 10) {
+                return "000" + sub;
+            }
+            if (sub < 100) {
+                return "00" + sub;
+            }
+            if (sub < 1000) {
+                return "0" + sub;
+            }
+            return "" + sub;
+        }
+
+        @Nonnull
         @Override
         public String name() {
-            return "CVE-" + year() + "-" + sub();
+            return "CVE-" + year() + "-" + subString();
         }
 
         @Nonnull
@@ -154,6 +169,16 @@ public interface Id extends Comparable<Id> {
             return cve;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof final Cve cve)) {return false;}
+            return sub == cve.sub && Objects.equals(year, cve.year);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(year, sub);
+        }
     }
 
     final class Cpe extends Base {
@@ -194,6 +219,16 @@ public interface Id extends Comparable<Id> {
             return cpe;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof final Cpe cpe)) {return false;}
+            return Objects.equals(value, cpe.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(value);
+        }
     }
 
     final class Cwe extends Base {
@@ -239,6 +274,16 @@ public interface Id extends Comparable<Id> {
             return cwe;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof final Cwe cwe)) {return false;}
+            return number == cwe.number;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(number);
+        }
     }
 
     final class Capec extends Base {
@@ -284,6 +329,16 @@ public interface Id extends Comparable<Id> {
             return capec;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof final Capec capec)) {return false;}
+            return number == capec.number;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(number);
+        }
     }
 
 

@@ -1,27 +1,38 @@
 package com.github.synaos.vulnerabilitiescache.cve;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.github.synaos.vulnerabilitiescache.Id;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
-import java.time.ZonedDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
 import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNull;
 import static com.github.synaos.vulnerabilitiescache.common.Optionals.ofNonNull;
 import static com.github.synaos.vulnerabilitiescache.common.Optionals.requireToBePresent;
 import static java.util.Optional.ofNullable;
 
+import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.github.synaos.vulnerabilitiescache.Id;
+
 @JsonDeserialize(builder = CveMetadata.Builder.class)
 @ThreadSafe
 @Immutable
-public final class CveMetadata {
+public final class CveMetadata implements Comparable<CveMetadata> {
+
+    @Override
+    public int compareTo(@Nonnull CveMetadata o) {
+        requireNonNull(o, "o");
+        return cveId.compareTo(o.cveId);
+    }
+
+    @Override
+    public String toString() {
+        return cveId.toString();
+    }
 
     @Nonnull
     @JsonProperty(value = "cveId")

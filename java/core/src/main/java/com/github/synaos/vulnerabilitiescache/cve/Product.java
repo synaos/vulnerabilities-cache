@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -202,6 +203,7 @@ public final class Product {
         }
 
         @JsonProperty("cpes")
+        @JsonAlias("cpe") // This is due to a bug inside CVE-2024-8587, was published with a wrong field name.
         @Nonnull
         public Builder withCpes(@Nullable CpeNames v) {
             this.cpes = ofNullable(v);

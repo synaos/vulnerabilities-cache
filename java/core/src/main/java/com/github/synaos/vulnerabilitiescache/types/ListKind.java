@@ -37,6 +37,10 @@ public abstract class ListKind<V, T extends ListKind<V, T>> implements Iterable<
     @Nonnull
     private final List<V> entries;
 
+    protected ListKind(@Nonnull List<V> entries) {
+        this(null, null, requireNonNull(entries, "entries"));
+    }
+
     protected ListKind(
         @Nullable @Nonnegative Integer minLength,
         @Nullable @Nonnegative Integer maxLength,
@@ -174,7 +178,7 @@ public abstract class ListKind<V, T extends ListKind<V, T>> implements Iterable<
         }
 
         @Override
-        public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+        public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             switch (p.currentToken()) {
                 case VALUE_NULL:
                     return null;

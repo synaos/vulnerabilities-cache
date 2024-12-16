@@ -21,7 +21,7 @@ public final class CpeName extends RegexKind<CpeName> {
     }
 
     private CpeName(@Nonnull String value) {
-        super(1, 1024, pattern, value);
+        super(1, 2048, pattern, value);
     }
 
 }

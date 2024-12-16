@@ -1,8 +1,8 @@
 package com.github.synaos.vulnerabilitiescache.cve;
 
+import static com.github.synaos.vulnerabilitiescache.common.AutoCloseables.closeQuietly;
 import static com.github.synaos.vulnerabilitiescache.cve.Codec.defaultInstance;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static okhttp3.internal.Util.closeQuietly;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
@@ -34,7 +34,9 @@ final class CodecTest {
         return Stream.of(
             "CVE-1999-0001.json",
             "CVE-2021-1636.json",
-            "CVE-2024-8023.json"
+            "CVE-2024-8023.json",
+            "CVE-2024-8587.json",
+            "CVE-2024-38182.json"
         ).map(name -> dynamicTest(name, () -> readRecord(name)));
     }
 
