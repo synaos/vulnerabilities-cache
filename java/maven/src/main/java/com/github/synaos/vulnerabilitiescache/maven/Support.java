@@ -31,6 +31,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
@@ -48,11 +49,8 @@ import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class Support {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Support.class);
 
     @Nonnull
     private static final ArtifactRepositoryLayout artifactRepositoryLayout = new DefaultRepositoryLayout();
@@ -103,6 +101,10 @@ final class Support {
             final var modelReader = new SettingsXpp3Reader();
             final var settings = modelReader.read(xmlReader);
 
+            // We're doing this for backwards compatibility reasons
+            if (settings.getRuntimeInfo() == null) {
+                settings.setRuntimeInfo(new RuntimeInfo(settings));
+            }
             return Optional.of(settings);
         } catch (FileNotFoundException | NoSuchFileException e) {
             return Optional.empty();
