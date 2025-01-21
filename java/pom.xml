@@ -43,7 +43,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <jackson.version>2.18.0</jackson.version>
+        <jackson.version>2.18.2</jackson.version>
         <reactor.version>3.7.2</reactor.version>
     </properties>
 
