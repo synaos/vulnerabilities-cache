@@ -9,10 +9,14 @@ import java.util.Optional;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.synaos.vulnerabilitiescache.common.Objects;
 
+@ThreadSafe
+@Immutable
 public abstract class StringKind<T extends StringKind<T>> implements Comparable<T> {
 
     @Nonnegative
@@ -72,7 +76,7 @@ public abstract class StringKind<T extends StringKind<T>> implements Comparable<
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) {return true;}
         if (o == null || !getClass().equals(o.getClass())) {return false;}
         final var that = (StringKind<?>) o;
@@ -82,7 +86,7 @@ public abstract class StringKind<T extends StringKind<T>> implements Comparable<
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Objects.hash(minLength, maxLength, value);
     }
 

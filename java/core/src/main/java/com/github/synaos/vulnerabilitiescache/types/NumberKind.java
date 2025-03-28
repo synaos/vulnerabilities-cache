@@ -10,10 +10,14 @@ import java.util.Optional;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.synaos.vulnerabilitiescache.common.Objects;
 
+@ThreadSafe
+@Immutable
 public abstract class NumberKind<V extends Number, T extends NumberKind<V, T>> implements Comparable<T> {
 
     @Nonnull

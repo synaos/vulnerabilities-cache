@@ -1,11 +1,11 @@
 package com.github.synaos.vulnerabilitiescache.versions;
 
-import static com.github.zafarkhaja.semver.Version.parse;
-import static com.github.zafarkhaja.semver.Version.tryParse;
 import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonEmpty;
 import static com.github.synaos.vulnerabilitiescache.common.Objects.requireNonNull;
 import static com.github.synaos.vulnerabilitiescache.versions.Version.Type.generic;
 import static com.github.synaos.vulnerabilitiescache.versions.Version.Type.semver;
+import static com.github.zafarkhaja.semver.Version.parse;
+import static com.github.zafarkhaja.semver.Version.tryParse;
 
 import java.util.Optional;
 import javax.annotation.Nonnegative;

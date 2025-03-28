@@ -12,6 +12,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -24,6 +26,8 @@ import com.fasterxml.jackson.databind.ser.ContainerSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
+@ThreadSafe
+@Immutable
 public abstract class ListKind<V, T extends ListKind<V, T>> implements Iterable<V> {
 
     @Nonnegative
@@ -33,6 +37,10 @@ public abstract class ListKind<V, T extends ListKind<V, T>> implements Iterable<
     @Nonnull
     private final List<V> entries;
 
+    protected ListKind(@Nonnull List<V> entries) {
+        this(null, null, requireNonNull(entries, "entries"));
+    }
+
     protected ListKind(
         @Nullable @Nonnegative Integer minLength,
         @Nullable @Nonnegative Integer maxLength,
@@ -40,7 +48,7 @@ public abstract class ListKind<V, T extends ListKind<V, T>> implements Iterable<
     ) {
         this.minLength = ofNullable(minLength).map(v -> requireNonNegative(v, "minLength"));
         this.maxLength = ofNullable(maxLength).map(v -> requireNonNegative(v, "maxLength"));
-        this.entries = requireNonNull(entries, "entries");
+        this.entries = List.copyOf(requireNonNull(entries, "entries"));
 
         this.minLength.ifPresent(v -> {
             if (this.entries.size() < v) {
@@ -170,7 +178,7 @@ public abstract class ListKind<V, T extends ListKind<V, T>> implements Iterable<
         }
 
         @Override
-        public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+        public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             switch (p.currentToken()) {
                 case VALUE_NULL:
                     return null;

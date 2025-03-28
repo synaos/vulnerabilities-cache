@@ -9,9 +9,11 @@ import javax.annotation.Nonnull;
 
 import com.github.synaos.vulnerabilitiescache.packages.PackageRef;
 import com.github.synaos.vulnerabilitiescache.packages.VersionedPackageRef;
+import javax.annotation.concurrent.ThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 
+@ThreadSafe
 public class IndexedVulnerabilities implements Vulnerabilities {
 
     @Nonnull
